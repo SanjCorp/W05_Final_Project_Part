@@ -1,4 +1,3 @@
-// routes/supplierRoutes.js
 const express = require("express");
 const {
   getAllSuppliers,
@@ -7,15 +6,13 @@ const {
   updateSupplier,
   deleteSupplier,
 } = require("../controllers/supplierController");
-const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
-// Todas las rutas protegidas
-router.get("/", ensureAuth, getAllSuppliers);
-router.get("/:id", ensureAuth, getSupplierById);
-router.post("/", ensureAuth, createSupplier);
-router.put("/:id", ensureAuth, updateSupplier);
-router.delete("/:id", ensureAuth, deleteSupplier);
+router.get("/", getAllSuppliers);
+router.get("/:id", getSupplierById);
+router.post("/", createSupplier);
+router.put("/:id", updateSupplier);
+router.delete("/:id", deleteSupplier);
 
 module.exports = router;

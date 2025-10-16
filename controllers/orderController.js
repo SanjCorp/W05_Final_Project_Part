@@ -20,10 +20,10 @@ exports.getOrderById = async (req, res) => {
 };
 
 exports.createOrder = async (req, res) => {
+  const order = new Order(req.body);
   try {
-    const order = new Order(req.body);
-    await order.save();
-    res.status(201).json(order);
+    const newOrder = await order.save();
+    res.status(201).json(newOrder);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -43,7 +43,7 @@ exports.deleteOrder = async (req, res) => {
   try {
     const deleted = await Order.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "Orden no encontrada" });
-    res.json({ message: "Orden eliminada" });
+    res.json({ message: "Orden eliminada correctamente" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

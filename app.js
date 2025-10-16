@@ -1,4 +1,3 @@
-// app.js
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -65,7 +64,7 @@ app.get("/logout", (req, res, next) => {
   req.logout(function (err) {
     if (err) return next(err);
     req.session.destroy(() => {
-      res.clearCookie("connect.sid"); // Borra la cookie de sesión
+      res.clearCookie("connect.sid");
       res.json({ message: "Sesión cerrada correctamente." });
     });
   });

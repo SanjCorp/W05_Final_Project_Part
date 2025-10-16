@@ -20,10 +20,10 @@ exports.getCustomerById = async (req, res) => {
 };
 
 exports.createCustomer = async (req, res) => {
+  const customer = new Customer(req.body);
   try {
-    const customer = new Customer(req.body);
-    await customer.save();
-    res.status(201).json(customer);
+    const newCustomer = await customer.save();
+    res.status(201).json(newCustomer);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -43,7 +43,7 @@ exports.deleteCustomer = async (req, res) => {
   try {
     const deleted = await Customer.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "Cliente no encontrado" });
-    res.json({ message: "Cliente eliminado" });
+    res.json({ message: "Cliente eliminado correctamente" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

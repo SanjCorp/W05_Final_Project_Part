@@ -20,10 +20,10 @@ exports.getProductById = async (req, res) => {
 };
 
 exports.createProduct = async (req, res) => {
+  const product = new Product(req.body);
   try {
-    const product = new Product(req.body);
-    await product.save();
-    res.status(201).json(product);
+    const newProduct = await product.save();
+    res.status(201).json(newProduct);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -43,7 +43,7 @@ exports.deleteProduct = async (req, res) => {
   try {
     const deleted = await Product.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ message: "Producto no encontrado" });
-    res.json({ message: "Producto eliminado" });
+    res.json({ message: "Producto eliminado correctamente" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
