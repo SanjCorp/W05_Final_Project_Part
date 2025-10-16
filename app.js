@@ -53,7 +53,7 @@ app.get(
   passport.authenticate("google", { failureRedirect: "/auth/failure" }),
   (req, res) => {
     console.log("🔐 Login exitoso con Google");
-    res.redirect("/api-docs");
+    res.redirect("/api-docs"); // Después de loguear, podrás usar todas las rutas /api/*
   }
 );
 
@@ -73,11 +73,11 @@ app.get("/logout", (req, res, next) => {
 
 app.get("/login", (req, res) => res.redirect("/auth/google"));
 
-// Rutas protegidas con ensureAuth
-app.use("/products", ensureAuth, productRoutes);
-app.use("/orders", ensureAuth, orderRoutes);
-app.use("/customers", ensureAuth, customerRoutes);
-app.use("/suppliers", ensureAuth, supplierRoutes);
+// Rutas protegidas con ensureAuth y prefijo /api
+app.use("/api/products", ensureAuth, productRoutes);
+app.use("/api/orders", ensureAuth, orderRoutes);
+app.use("/api/customers", ensureAuth, customerRoutes);
+app.use("/api/suppliers", ensureAuth, supplierRoutes);
 
 // Documentación Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));

@@ -1,7 +1,7 @@
-module.exports = function (req, res, next) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || authHeader !== "Bearer secreto123") {
-    return res.status(401).json({ message: "No autorizado" });
+// middleware/ensureAuth.js
+module.exports = function ensureAuth(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
   }
-  next();
+  res.status(401).json({ message: "No autorizado. Inicia sesión primero." });
 };
