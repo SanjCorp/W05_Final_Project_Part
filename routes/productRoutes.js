@@ -1,20 +1,20 @@
 const express = require("express");
-const { 
-  getAllX,
-  getXById,
-  createX,
-  updateX,
-  deleteX 
+const {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 } = require("../controllers/productController");
 const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
 // Todas las rutas protegidas
-router.get("/", ensureAuth, getAllX);
-router.get("/:id", ensureAuth, getXById);
-router.post("/", ensureAuth, createX);
-router.put("/:id", ensureAuth, updateX);
-router.delete("/:id", ensureAuth, deleteX);
+router.get("/", ensureAuth, getAllProducts);
+router.get("/:id", ensureAuth, getProductById);
+router.post("/", ensureAuth, createProduct);
+router.put("/:id", ensureAuth, updateProduct);
+router.delete("/:id", ensureAuth, deleteProduct);
 
 module.exports = router;
