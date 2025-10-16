@@ -1,4 +1,3 @@
-// controllers/orderController.js
 const Order = require("../models/orderModel");
 
 exports.getAllOrders = async (req, res) => {

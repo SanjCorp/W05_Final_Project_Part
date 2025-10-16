@@ -81,12 +81,10 @@ app.use("/api/suppliers", ensureAuth, supplierRoutes);
 
 // Documentación Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
 app.get("/", (req, res) => res.redirect("/api-docs"));
 
 // Manejo de errores
 app.use((req, res) => res.status(404).json({ message: "Not Found" }));
-
 app.use((err, req, res, next) => {
   console.error("⚠️ Error detectado:", err);
   res.status(err.status || 500).json({ message: err.message || "Internal Error" });

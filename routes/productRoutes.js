@@ -1,4 +1,3 @@
-// routes/productRoutes.js
 const express = require("express");
 const {
   getAllProducts,
@@ -11,7 +10,6 @@ const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
-// Todas las rutas protegidas
 router.get("/", ensureAuth, getAllProducts);
 router.get("/:id", ensureAuth, getProductById);
 router.post("/", ensureAuth, createProduct);

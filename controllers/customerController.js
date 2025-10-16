@@ -1,4 +1,3 @@
-// controllers/customerController.js
 const Customer = require("../models/customerModel");
 
 exports.getAllCustomers = async (req, res) => {

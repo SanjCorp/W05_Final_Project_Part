@@ -1,4 +1,3 @@
-// routes/orderRoutes.js
 const express = require("express");
 const {
   getAllOrders,
@@ -11,7 +10,6 @@ const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
-// Todas las rutas protegidas
 router.get("/", ensureAuth, getAllOrders);
 router.get("/:id", ensureAuth, getOrderById);
 router.post("/", ensureAuth, createOrder);

@@ -1,4 +1,3 @@
-// routes/customerRoutes.js
 const express = require("express");
 const {
   getAllCustomers,
@@ -11,7 +10,6 @@ const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
-// Todas las rutas protegidas
 router.get("/", ensureAuth, getAllCustomers);
 router.get("/:id", ensureAuth, getCustomerById);
 router.post("/", ensureAuth, createCustomer);
