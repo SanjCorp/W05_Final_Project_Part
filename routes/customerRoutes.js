@@ -1,5 +1,5 @@
 const express = require('express');
-const Customer = require('../models/Customer');
+const Customer = require('../models/CustomerModel ');
 
 module.exports = (ensureAuth) => {
   const router = express.Router();
