@@ -17,11 +17,12 @@ const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const supplierRoutes = require("./routes/supplierRoutes");
+const ensureAuth = require("./middleware/ensureAuth");
 
 const app = express();
 app.use(express.json());
 
-// 🟢 Configuración de sesión (usando MongoStore)
+// 🟢 Configuración de sesión
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "clave_segura",
@@ -30,7 +31,7 @@ app.use(
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
       collectionName: "sessions",
-      ttl: 14 * 24 * 60 * 60, // 14 días
+      ttl: 14 * 24 * 60 * 60,
     }),
   })
 );
@@ -38,12 +39,12 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 🟢 Rutas de autenticación con Google
+// 🟢 Autenticación con Google
 app.get(
   "/auth/google",
   passport.authenticate("google", {
-    scope: ["profile", "email"], // 🔹 IMPORTANTE: este parámetro evita el error de "scope"
-    prompt: "select_account", // opcional: fuerza selección de cuenta
+    scope: ["profile", "email"],
+    prompt: "select_account",
   })
 );
 
@@ -52,13 +53,13 @@ app.get(
   passport.authenticate("google", { failureRedirect: "/auth/failure" }),
   (req, res) => {
     console.log("🔐 Login exitoso con Google");
-    res.redirect("/api-docs"); // redirige al Swagger
+    res.redirect("/api-docs");
   }
 );
 
-app.get("/auth/failure", (req, res) => {
-  res.status(401).send("❌ Error al iniciar sesión con Google.");
-});
+app.get("/auth/failure", (req, res) =>
+  res.status(401).send("❌ Error al iniciar sesión con Google.")
+);
 
 app.get("/logout", (req, res, next) => {
   req.logout(err => {
@@ -67,42 +68,24 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-// 🔹 Ruta para iniciar sesión manualmente
-app.get("/login", (req, res) => {
-  res.redirect("/auth/google");
-});
+app.get("/login", (req, res) => res.redirect("/auth/google"));
 
-// 🧱 Middleware para proteger rutas
-function ensureAuth(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) return next();
-  return res
-    .status(401)
-    .json({ message: "Unauthorized: please log in with Google first." });
-}
-
-// 🟢 Rutas protegidas
-app.use("/products", productRoutes(ensureAuth));
-app.use("/orders", orderRoutes(ensureAuth));
-app.use("/customers", customerRoutes(ensureAuth));
-app.use("/suppliers", supplierRoutes(ensureAuth));
+// 🧱 Middleware de protección
+app.use("/products", ensureAuth, productRoutes);
+app.use("/orders", ensureAuth, orderRoutes);
+app.use("/customers", ensureAuth, customerRoutes);
+app.use("/suppliers", ensureAuth, supplierRoutes);
 
 // 🧾 Documentación Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// 🔹 Página principal
 app.get("/", (req, res) => res.redirect("/api-docs"));
 
-// 🚫 Error 404
-app.use((req, res) => {
-  res.status(404).json({ message: "Not Found" });
-});
+app.use((req, res) => res.status(404).json({ message: "Not Found" }));
 
-// 🔴 Manejo global de errores
 app.use((err, req, res, next) => {
   console.error("⚠️ Error detectado:", err);
-  res
-    .status(err.status || 500)
-    .json({ message: err.message || "Internal Server Error" });
+  res.status(err.status || 500).json({ message: err.message || "Internal Error" });
 });
 
 // 🟢 Conexión a MongoDB
@@ -112,7 +95,7 @@ mongoose
     console.log("✅ Conectado a MongoDB");
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () =>
-      console.log(`🚀 Servidor ejecutándose en el puerto ${PORT}`)
+      console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`)
     );
   })
   .catch(err => console.error("❌ Error al conectar a MongoDB:", err.message));

@@ -1,25 +1,19 @@
-const express = require('express');
-const Customer = require('../models/CustomerModel ');
+// routes/customerRoutes.js
+const express = require("express");
+const {
+  getCustomers,
+  getCustomerById,
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
+} = require("../controllers/customerController");
 
-module.exports = (ensureAuth) => {
-  const router = express.Router();
+const router = express.Router();
 
-  router.post('/', ensureAuth, async (req, res) => {
-    try {
-      const { name, email, phone } = req.body;
-      const customer = new Customer({ name, email, phone });
-      await customer.save();
-      res.status(201).json(customer);
-    } catch (err) {
-      console.error('Error al crear cliente:', err);
-      res.status(500).json({ message: 'Error al crear cliente' });
-    }
-  });
+router.get("/", getCustomers);
+router.get("/:id", getCustomerById);
+router.post("/", createCustomer);
+router.put("/:id", updateCustomer);
+router.delete("/:id", deleteCustomer);
 
-  router.get('/', ensureAuth, async (req, res) => {
-    const customers = await Customer.find();
-    res.json(customers);
-  });
-
-  return router;
-};
+module.exports = router;

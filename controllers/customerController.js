@@ -1,51 +1,51 @@
 // controllers/customerController.js
-const Customer = require('../models/customerModel');
+const Customer = require("../models/customerModel");
 
-exports.getAllCustomers = async (req, res) => {
+exports.getCustomers = async (req, res) => {
   try {
-    const list = await Customer.find();
-    res.status(200).json(list);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const customers = await Customer.find();
+    res.json(customers);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener clientes", error });
   }
 };
 
 exports.getCustomerById = async (req, res) => {
   try {
-    const c = await Customer.findById(req.params.id);
-    if (!c) return res.status(404).json({ message: 'Customer not found' });
-    res.json(c);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    const customer = await Customer.findById(req.params.id);
+    if (!customer) return res.status(404).json({ message: "Cliente no encontrado" });
+    res.json(customer);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener el cliente", error });
   }
 };
 
 exports.createCustomer = async (req, res) => {
   try {
-    const newC = new Customer(req.body);
-    const saved = await newC.save();
-    res.status(201).json(saved);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    const newCustomer = new Customer(req.body);
+    await newCustomer.save();
+    res.status(201).json(newCustomer);
+  } catch (error) {
+    res.status(400).json({ message: "Error al crear cliente", error });
   }
 };
 
 exports.updateCustomer = async (req, res) => {
   try {
-    const updated = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!updated) return res.status(404).json({ message: 'Customer not found' });
+    const updated = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updated) return res.status(404).json({ message: "Cliente no encontrado" });
     res.json(updated);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+  } catch (error) {
+    res.status(400).json({ message: "Error al actualizar cliente", error });
   }
 };
 
 exports.deleteCustomer = async (req, res) => {
   try {
     const deleted = await Customer.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: 'Customer not found' });
-    res.json({ message: 'Customer deleted' });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    if (!deleted) return res.status(404).json({ message: "Cliente no encontrado" });
+    res.json({ message: "Cliente eliminado correctamente" });
+  } catch (error) {
+    res.status(400).json({ message: "Error al eliminar cliente", error });
   }
 };
