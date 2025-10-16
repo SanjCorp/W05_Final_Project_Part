@@ -1,5 +1,7 @@
 // middleware/ensureAuth.js
-module.exports = function ensureAuth(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) return next();
-  res.status(401).json({ message: "Unauthorized" });
+module.exports = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next(); // Usuario autenticado, continua
+  }
+  return res.status(401).json({ message: "❌ Necesitas iniciar sesión para acceder" });
 };

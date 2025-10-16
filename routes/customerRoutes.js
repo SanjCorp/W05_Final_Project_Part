@@ -11,6 +11,7 @@ const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
+// Todas las rutas protegidas
 router.get("/", ensureAuth, getCustomers);
 router.get("/:id", ensureAuth, getCustomerById);
 router.post("/", ensureAuth, createCustomer);
