@@ -1,3 +1,4 @@
+// routes/customerRoutes.js
 const express = require("express");
 const {
   getAllCustomers,
@@ -6,13 +7,15 @@ const {
   updateCustomer,
   deleteCustomer,
 } = require("../controllers/customerController");
+const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
-router.get("/", getAllCustomers);
-router.get("/:id", getCustomerById);
-router.post("/", createCustomer);
-router.put("/:id", updateCustomer);
-router.delete("/:id", deleteCustomer);
+// Todas las rutas protegidas con ensureAuth
+router.get("/", ensureAuth, getAllCustomers);
+router.get("/:id", ensureAuth, getCustomerById);
+router.post("/", ensureAuth, createCustomer);
+router.put("/:id", ensureAuth, updateCustomer);
+router.delete("/:id", ensureAuth, deleteCustomer);
 
 module.exports = router;

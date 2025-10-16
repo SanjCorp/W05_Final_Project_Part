@@ -1,3 +1,4 @@
+// routes/productRoutes.js
 const express = require("express");
 const {
   getAllProducts,
@@ -6,13 +7,15 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../controllers/productController");
+const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
-router.get("/", getAllProducts);
-router.get("/:id", getProductById);
-router.post("/", createProduct);
-router.put("/:id", updateProduct);
-router.delete("/:id", deleteProduct);
+// Todas las rutas protegidas con ensureAuth
+router.get("/", ensureAuth, getAllProducts);
+router.get("/:id", ensureAuth, getProductById);
+router.post("/", ensureAuth, createProduct);
+router.put("/:id", ensureAuth, updateProduct);
+router.delete("/:id", ensureAuth, deleteProduct);
 
 module.exports = router;
