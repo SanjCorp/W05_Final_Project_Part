@@ -62,11 +62,15 @@ app.get("/auth/failure", (req, res) =>
 );
 
 app.get("/logout", (req, res, next) => {
-  req.logout(err => {
+  req.logout(function(err) {
     if (err) return next(err);
-    res.redirect("/");
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid"); // Borra la cookie de sesión
+      res.redirect("/login"); // Redirige a login o a donde quieras
+    });
   });
 });
+
 
 app.get("/login", (req, res) => res.redirect("/auth/google"));
 
