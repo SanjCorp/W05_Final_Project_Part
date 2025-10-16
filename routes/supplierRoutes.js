@@ -1,19 +1,26 @@
 // routes/supplierRoutes.js
-const express = require("express");
+const express = require('express');
 const {
-  getSuppliers,
+  getAllSuppliers,
   getSupplierById,
   createSupplier,
   updateSupplier,
   deleteSupplier,
-} = require("../controllers/supplierController");
+} = require('../controllers/supplierController');
 
 const router = express.Router();
 
-router.get("/", getSuppliers);
-router.get("/:id", getSupplierById);
-router.post("/", createSupplier);
-router.put("/:id", updateSupplier);
+// Aquí aplicamos ensureAuth directamente en cada ruta
+const ensureAuth = require('../middleware/ensureAuth');
+
+router.get('/', ensureAuth, getAllSuppliers);
+router.get('/:id', ensureAuth, getSupplierById);
+router.post('/', ensureAuth, createSupplier);
+router.put('/:id', ensureAuth, updateSupplier);
+router.delete('/:id', ensureAuth, deleteSupplier);
+
+module.exports = router;
+ut("/:id", updateSupplier);
 router.delete("/:id", deleteSupplier);
 
 module.exports = router;
