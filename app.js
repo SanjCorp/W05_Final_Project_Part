@@ -71,18 +71,20 @@ app.get("/logout", (req, res, next) => {
 app.get("/login", (req, res) => res.redirect("/auth/google"));
 
 // 🧱 Middleware de protección aplicado dentro de las rutas
-app.use("/products", productRoutes);
-app.use("/orders", orderRoutes);
-app.use("/customers", customerRoutes);
-app.use("/suppliers", supplierRoutes);
+app.use("/products", ensureAuth, productRoutes);
+app.use("/orders", ensureAuth, orderRoutes);
+app.use("/customers", ensureAuth, customerRoutes);
+app.use("/suppliers", ensureAuth, supplierRoutes);
 
 // 🧾 Documentación Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/", (req, res) => res.redirect("/api-docs"));
 
+// Manejo de 404
 app.use((req, res) => res.status(404).json({ message: "Not Found" }));
 
+// Manejo de errores
 app.use((err, req, res, next) => {
   console.error("⚠️ Error detectado:", err);
   res.status(err.status || 500).json({ message: err.message || "Internal Error" });
@@ -94,7 +96,9 @@ mongoose
   .then(() => {
     console.log("✅ Conectado a MongoDB");
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`));
+    app.listen(PORT, () =>
+      console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`)
+    );
   })
   .catch(err => console.error("❌ Error al conectar a MongoDB:", err.message));
 
