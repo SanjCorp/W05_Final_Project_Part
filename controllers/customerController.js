@@ -1,9 +1,9 @@
-const Customer = require("../models/customerModel");
+const Customer = require("../models/Customer");
 
 exports.getAllCustomers = async (req, res) => {
   try {
     const customers = await Customer.find();
-    res.json(customers);
+    res.status(200).json(customers);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -12,18 +12,18 @@ exports.getAllCustomers = async (req, res) => {
 exports.getCustomerById = async (req, res) => {
   try {
     const customer = await Customer.findById(req.params.id);
-    if (!customer) return res.status(404).json({ message: "Cliente no encontrado" });
-    res.json(customer);
+    if (!customer) return res.status(404).json({ message: "Customer not found" });
+    res.status(200).json(customer);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
 exports.createCustomer = async (req, res) => {
-  const customer = new Customer(req.body);
   try {
-    const newCustomer = await customer.save();
-    res.status(201).json(newCustomer);
+    const customer = new Customer(req.body);
+    await customer.save();
+    res.status(201).json(customer);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -31,9 +31,9 @@ exports.createCustomer = async (req, res) => {
 
 exports.updateCustomer = async (req, res) => {
   try {
-    const updated = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updated) return res.status(404).json({ message: "Cliente no encontrado" });
-    res.json(updated);
+    const customer = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!customer) return res.status(404).json({ message: "Customer not found" });
+    res.status(200).json(customer);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -41,9 +41,9 @@ exports.updateCustomer = async (req, res) => {
 
 exports.deleteCustomer = async (req, res) => {
   try {
-    const deleted = await Customer.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: "Cliente no encontrado" });
-    res.json({ message: "Cliente eliminado correctamente" });
+    const customer = await Customer.findByIdAndDelete(req.params.id);
+    if (!customer) return res.status(404).json({ message: "Customer not found" });
+    res.status(200).json({ message: "Customer deleted" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
