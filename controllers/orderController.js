@@ -1,10 +1,9 @@
-// controllers/orderController.js
-const Order = require("../models/orderModel");
+const Order = require("../models/Order");
 
 const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find();
-    res.status(200).json(orders);
+    res.json(orders);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -14,7 +13,7 @@ const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: "Order not found" });
-    res.status(200).json(order);
+    res.json(order);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -22,10 +21,9 @@ const getOrderById = async (req, res) => {
 
 const createOrder = async (req, res) => {
   try {
-    const { productId, quantity, customerName, customerEmail, status } = req.body;
-    const newOrder = new Order({ productId, quantity, customerName, customerEmail, status });
-    const savedOrder = await newOrder.save();
-    res.status(201).json(savedOrder);
+    const order = new Order(req.body);
+    const saved = await order.save();
+    res.status(201).json(saved);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -33,13 +31,9 @@ const createOrder = async (req, res) => {
 
 const updateOrder = async (req, res) => {
   try {
-    const updatedOrder = await Order.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
-    if (!updatedOrder) return res.status(404).json({ message: "Order not found" });
-    res.status(200).json(updatedOrder);
+    const updated = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!updated) return res.status(404).json({ message: "Order not found" });
+    res.json(updated);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -47,18 +41,12 @@ const updateOrder = async (req, res) => {
 
 const deleteOrder = async (req, res) => {
   try {
-    const deletedOrder = await Order.findByIdAndDelete(req.params.id);
-    if (!deletedOrder) return res.status(404).json({ message: "Order not found" });
-    res.status(200).json({ message: "Order deleted successfully" });
+    const deleted = await Order.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Order not found" });
+    res.json({ message: "Order deleted" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-module.exports = {
-  getAllOrders,
-  getOrderById,
-  createOrder,
-  updateOrder,
-  deleteOrder,
-};
+module.exports = { getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder };

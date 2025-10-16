@@ -1,10 +1,9 @@
-// controllers/customerController.js
-const Customer = require("../models/customerModel");
+const Customer = require("../models/Customer");
 
 const getAllCustomers = async (req, res) => {
   try {
     const customers = await Customer.find();
-    res.status(200).json(customers);
+    res.json(customers);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -14,7 +13,7 @@ const getCustomerById = async (req, res) => {
   try {
     const customer = await Customer.findById(req.params.id);
     if (!customer) return res.status(404).json({ message: "Customer not found" });
-    res.status(200).json(customer);
+    res.json(customer);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -22,10 +21,9 @@ const getCustomerById = async (req, res) => {
 
 const createCustomer = async (req, res) => {
   try {
-    const { name, email, phone } = req.body;
-    const newCustomer = new Customer({ name, email, phone });
-    const savedCustomer = await newCustomer.save();
-    res.status(201).json(savedCustomer);
+    const customer = new Customer(req.body);
+    const saved = await customer.save();
+    res.status(201).json(saved);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -33,13 +31,9 @@ const createCustomer = async (req, res) => {
 
 const updateCustomer = async (req, res) => {
   try {
-    const updatedCustomer = await Customer.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
-    if (!updatedCustomer) return res.status(404).json({ message: "Customer not found" });
-    res.status(200).json(updatedCustomer);
+    const updated = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!updated) return res.status(404).json({ message: "Customer not found" });
+    res.json(updated);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -47,18 +41,12 @@ const updateCustomer = async (req, res) => {
 
 const deleteCustomer = async (req, res) => {
   try {
-    const deletedCustomer = await Customer.findByIdAndDelete(req.params.id);
-    if (!deletedCustomer) return res.status(404).json({ message: "Customer not found" });
-    res.status(200).json({ message: "Customer deleted successfully" });
+    const deleted = await Customer.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Customer not found" });
+    res.json({ message: "Customer deleted" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-module.exports = {
-  getAllCustomers,
-  getCustomerById,
-  createCustomer,
-  updateCustomer,
-  deleteCustomer,
-};
+module.exports = { getAllCustomers, getCustomerById, createCustomer, updateCustomer, deleteCustomer };

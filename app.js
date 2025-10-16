@@ -1,4 +1,3 @@
-// app.js
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -6,64 +5,38 @@ const swaggerUi = require("swagger-ui-express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const passport = require("passport");
-const path = require("path");
-
 dotenv.config();
-require("./auth"); // Configuración de Google OAuth
+require("./auth");
 
-// Importar rutas y Swagger
 const swaggerDocument = require("./swagger/swagger.json");
 const customerRoutes = require("./routes/customerRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const productRoutes = require("./routes/productRoutes");
 const supplierRoutes = require("./routes/supplierRoutes");
+const ensureAuth = require("./middleware/ensureAuth");
 
 const app = express();
 app.use(express.json());
 
-// Configuración de sesión
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "clave_segura",
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI,
-      collectionName: "sessions",
-      ttl: 14 * 24 * 60 * 60,
-    }),
-    cookie: {
-      maxAge: 14 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-    },
+    store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Autenticación con Google (puedes usarla pero no bloquea rutas)
-app.get(
-  "/auth/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-    prompt: "select_account",
-  })
-);
-
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"], prompt: "select_account" }));
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/auth/failure" }),
-  (req, res) => {
-    console.log("🔐 Login exitoso con Google");
-    res.redirect("/api-docs");
-  }
+  (req, res) => res.redirect("/api-docs")
 );
-
-app.get("/auth/failure", (req, res) =>
-  res.status(401).send("❌ Error al iniciar sesión con Google.")
-);
-
+app.get("/auth/failure", (req, res) => res.status(401).send("❌ Error al iniciar sesión con Google."));
 app.get("/logout", (req, res, next) => {
   req.logout(function (err) {
     if (err) return next(err);
@@ -73,41 +46,28 @@ app.get("/logout", (req, res, next) => {
     });
   });
 });
-
 app.get("/login", (req, res) => res.redirect("/auth/google"));
 
-// Rutas sin autenticación (para que CRUD funcione sin login)
-app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/customers", customerRoutes);
-app.use("/api/suppliers", supplierRoutes);
+app.use("/api/products", ensureAuth, productRoutes);
+app.use("/api/orders", ensureAuth, orderRoutes);
+app.use("/api/customers", ensureAuth, customerRoutes);
+app.use("/api/suppliers", ensureAuth, supplierRoutes);
 
-// Documentación Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
 app.get("/", (req, res) => res.redirect("/api-docs"));
 
-// Middleware opcional de debug
-app.use((req, res, next) => {
-  console.log("REQ.USER:", req.user);
-  next();
-});
-
-// Manejo de errores
 app.use((req, res) => res.status(404).json({ message: "Not Found" }));
 app.use((err, req, res, next) => {
-  console.error("⚠️ Error detectado:", err);
+  console.error(err);
   res.status(err.status || 500).json({ message: err.message || "Internal Error" });
 });
 
-// Conexión a MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("✅ Conectado a MongoDB");
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`));
+    app.listen(PORT, () => console.log(`🚀 Servidor corriendo en puerto ${PORT}`));
   })
-  .catch((err) => console.error("❌ Error al conectar a MongoDB:", err.message));
+  .catch((err) => console.error("❌ Error al conectar MongoDB:", err));
 
 module.exports = app;
