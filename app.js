@@ -17,7 +17,6 @@ const customerRoutes = require("./routes/customerRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const productRoutes = require("./routes/productRoutes");
 const supplierRoutes = require("./routes/supplierRoutes");
-const ensureAuth = require("./middleware/ensureAuth");
 
 const app = express();
 app.use(express.json());
@@ -31,10 +30,10 @@ app.use(
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
       collectionName: "sessions",
-      ttl: 14 * 24 * 60 * 60, // 14 días
+      ttl: 14 * 24 * 60 * 60,
     }),
     cookie: {
-      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 días
+      maxAge: 14 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     },
   })
@@ -43,7 +42,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Autenticación con Google
+// Autenticación con Google (puedes usarla pero no bloquea rutas)
 app.get(
   "/auth/google",
   passport.authenticate("google", {
@@ -57,7 +56,6 @@ app.get(
   passport.authenticate("google", { failureRedirect: "/auth/failure" }),
   (req, res) => {
     console.log("🔐 Login exitoso con Google");
-    // Redirige a Swagger para probar las rutas
     res.redirect("/api-docs");
   }
 );
@@ -78,19 +76,18 @@ app.get("/logout", (req, res, next) => {
 
 app.get("/login", (req, res) => res.redirect("/auth/google"));
 
-// Rutas protegidas con ensureAuth y prefijo /api
-// Para pruebas sin login, comentar ensureAuth
-app.use("/api/products", ensureAuth, productRoutes);
-app.use("/api/orders", ensureAuth, orderRoutes);
-app.use("/api/customers", ensureAuth, customerRoutes);
-app.use("/api/suppliers", ensureAuth, supplierRoutes);
+// Rutas sin autenticación (para que CRUD funcione sin login)
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/customers", customerRoutes);
+app.use("/api/suppliers", supplierRoutes);
 
 // Documentación Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/", (req, res) => res.redirect("/api-docs"));
 
-// Middleware de debug opcional (muestra req.user en consola)
+// Middleware opcional de debug
 app.use((req, res, next) => {
   console.log("REQ.USER:", req.user);
   next();
@@ -98,7 +95,6 @@ app.use((req, res, next) => {
 
 // Manejo de errores
 app.use((req, res) => res.status(404).json({ message: "Not Found" }));
-
 app.use((err, req, res, next) => {
   console.error("⚠️ Error detectado:", err);
   res.status(err.status || 500).json({ message: err.message || "Internal Error" });
