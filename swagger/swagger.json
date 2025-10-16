@@ -37,7 +37,6 @@
         "responses": { "200": { "description": "Product deleted" } }
       }
     },
-
     "/orders": {
       "get": { "summary": "Get all orders", "responses": { "200": { "description": "List of orders" } } },
       "post": {
@@ -59,7 +58,6 @@
         "responses": { "200": { "description": "Order deleted" } }
       }
     },
-
     "/customers": {
       "get": { "summary": "Get all customers", "responses": { "200": { "description": "List of customers" } } },
       "post": {
@@ -81,7 +79,6 @@
         "responses": { "200": { "description": "Customer deleted" } }
       }
     },
-
     "/suppliers": {
       "get": { "summary": "Get all suppliers", "responses": { "200": { "description": "List of suppliers" } } },
       "post": {
@@ -102,50 +99,40 @@
         "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
         "responses": { "200": { "description": "Supplier deleted" } }
       }
+    },
+
+    "/logout": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Cerrar sesión del usuario",
+        "description": "Cierra la sesión del usuario y destruye la cookie de sesión.",
+        "responses": {
+          "200": {
+            "description": "Sesión cerrada correctamente",
+            "content": {
+              "application/json": {
+                "example": { "message": "Sesión cerrada correctamente." }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al cerrar sesión",
+            "content": {
+              "application/json": {
+                "example": { "message": "Internal Server Error" }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "Product": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string" },
-          "description": { "type": "string" },
-          "price": { "type": "number" },
-          "category": { "type": "string" },
-          "inStock": { "type": "boolean" }
-        },
-        "required": ["name", "price", "category"]
-      },
-      "Order": {
-        "type": "object",
-        "properties": {
-          "productId": { "type": "string" },
-          "quantity": { "type": "number" },
-          "customerName": { "type": "string" },
-          "customerEmail": { "type": "string" },
-          "status": { "type": "string" }
-        },
-        "required": ["productId", "quantity", "customerName", "customerEmail"]
-      },
-      "Customer": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string" },
-          "email": { "type": "string" },
-          "phone": { "type": "string" }
-        },
-        "required": ["name", "email"]
-      },
-      "Supplier": {
-        "type": "object",
-        "properties": {
-          "name": { "type": "string" },
-          "email": { "type": "string" },
-          "phone": { "type": "string" }
-        },
-        "required": ["name", "email"]
-      }
+      "Product": { "type": "object", "properties": { "name": { "type": "string" }, "description": { "type": "string" }, "price": { "type": "number" }, "category": { "type": "string" }, "inStock": { "type": "boolean" } }, "required": ["name", "price", "category"] },
+      "Order": { "type": "object", "properties": { "productId": { "type": "string" }, "quantity": { "type": "number" }, "customerName": { "type": "string" }, "customerEmail": { "type": "string" }, "status": { "type": "string" } }, "required": ["productId", "quantity", "customerName", "customerEmail"] },
+      "Customer": { "type": "object", "properties": { "name": { "type": "string" }, "email": { "type": "string" }, "phone": { "type": "string" } }, "required": ["name", "email"] },
+      "Supplier": { "type": "object", "properties": { "name": { "type": "string" }, "email": { "type": "string" }, "phone": { "type": "string" } }, "required": ["name", "email"] }
     }
   }
 }

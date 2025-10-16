@@ -66,10 +66,11 @@ app.get("/logout", (req, res, next) => {
     if (err) return next(err);
     req.session.destroy(() => {
       res.clearCookie("connect.sid"); // Borra la cookie de sesión
-      res.redirect("/login"); // Redirige a login o a donde quieras
+      res.json({ message: "Sesión cerrada correctamente." });
     });
   });
 });
+
 
 
 app.get("/login", (req, res) => res.redirect("/auth/google"));
