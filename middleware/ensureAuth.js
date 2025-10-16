@@ -1,7 +1,7 @@
-// middleware/ensureAuth.js
-module.exports = function ensureAuth(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) {
-    return next();
+module.exports = function (req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || authHeader !== "Bearer secreto123") {
+    return res.status(401).json({ message: "No autorizado" });
   }
-  res.status(401).json({ message: "❌ No autorizado, inicia sesión primero." });
+  next();
 };

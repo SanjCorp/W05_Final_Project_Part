@@ -1,53 +1,50 @@
-// controllers/orderController.js
-const Order = require("../models/Order");
+const Order = require('../models/orderModel');
 
-exports.getAllOrders = async (req, res) => {
+exports.createOrder = async (req, res) => {
+  try {
+    const order = new Order(req.body);
+    await order.save();
+    res.status(201).json(order);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+exports.getOrders = async (req, res) => {
   try {
     const orders = await Order.find();
     res.json(orders);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
 exports.getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!order) return res.status(404).json({ message: 'Orden no encontrada' });
     res.json(order);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-exports.createOrder = async (req, res) => {
-  try {
-    const order = await Order.create(req.body);
-    res.status(201).json(order);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
 exports.updateOrder = async (req, res) => {
   try {
-    const order = await Order.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!order) return res.status(404).json({ message: "Order not found" });
-    res.json(order);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    const updated = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updated) return res.status(404).json({ message: 'Orden no encontrada' });
+    res.json(updated);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
 
 exports.deleteOrder = async (req, res) => {
   try {
     const deleted = await Order.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: "Order not found" });
-    res.json({ message: "Order deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    if (!deleted) return res.status(404).json({ message: 'Orden no encontrada' });
+    res.json({ message: 'Orden eliminada correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

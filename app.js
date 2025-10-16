@@ -13,9 +13,9 @@ require("./auth"); // Configuración de Google OAuth
 
 // Importar rutas y Swagger
 const swaggerDocument = require("./swagger/swagger.json");
-const productRoutes = require("./routes/productRoutes");
-const orderRoutes = require("./routes/orderRoutes");
 const customerRoutes = require("./routes/customerRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const productRoutes = require("./routes/productRoutes");
 const supplierRoutes = require("./routes/supplierRoutes");
 const ensureAuth = require("./middleware/ensureAuth");
 
@@ -62,7 +62,7 @@ app.get("/auth/failure", (req, res) =>
 );
 
 app.get("/logout", (req, res, next) => {
-  req.logout(function(err) {
+  req.logout(function (err) {
     if (err) return next(err);
     req.session.destroy(() => {
       res.clearCookie("connect.sid"); // Borra la cookie de sesión
@@ -71,15 +71,13 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-
-
 app.get("/login", (req, res) => res.redirect("/auth/google"));
 
-// Rutas protegidas con ensureAuth
-app.use("/products", ensureAuth, productRoutes);
-app.use("/orders", ensureAuth, orderRoutes);
-app.use("/customers", ensureAuth, customerRoutes);
-app.use("/suppliers", ensureAuth, supplierRoutes);
+// ✅ Rutas protegidas con ensureAuth y prefijo /api/
+app.use("/api/products", ensureAuth, productRoutes);
+app.use("/api/orders", ensureAuth, orderRoutes);
+app.use("/api/customers", ensureAuth, customerRoutes);
+app.use("/api/suppliers", ensureAuth, supplierRoutes);
 
 // Documentación Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -102,6 +100,6 @@ mongoose
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`));
   })
-  .catch(err => console.error("❌ Error al conectar a MongoDB:", err.message));
+  .catch((err) => console.error("❌ Error al conectar a MongoDB:", err.message));
 
 module.exports = app;
