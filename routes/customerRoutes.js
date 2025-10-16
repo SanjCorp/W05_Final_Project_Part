@@ -1,20 +1,21 @@
+// routes/customerRoutes.js
 const express = require("express");
-const { 
-  getAllX,
-  getXById,
-  createX,
-  updateX,
-  deleteX 
+const {
+  getAllCustomers,
+  getCustomerById,
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
 } = require("../controllers/customerController");
 const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
 
 // Todas las rutas protegidas
-router.get("/", ensureAuth, getAllcustomer);
-router.get("/:id", ensureAuth, getcustomerById);
-router.post("/", ensureAuth, createcustomer);
-router.put("/:id", ensureAuth, updatecustomer);
-router.delete("/:id", ensureAuth, deletecustomer);
+router.get("/", ensureAuth, getAllCustomers);
+router.get("/:id", ensureAuth, getCustomerById);
+router.post("/", ensureAuth, createCustomer);
+router.put("/:id", ensureAuth, updateCustomer);
+router.delete("/:id", ensureAuth, deleteCustomer);
 
 module.exports = router;
