@@ -33,6 +33,10 @@ app.use(
       collectionName: "sessions",
       ttl: 14 * 24 * 60 * 60,
     }),
+    cookie: {
+      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 días
+      httpOnly: true,
+    },
   })
 );
 
@@ -53,7 +57,8 @@ app.get(
   passport.authenticate("google", { failureRedirect: "/auth/failure" }),
   (req, res) => {
     console.log("🔐 Login exitoso con Google");
-    res.redirect("/api-docs"); // Después de loguear, podrás usar todas las rutas /api/*
+    // Redirige a Swagger para probar las rutas
+    res.redirect("/api-docs");
   }
 );
 
@@ -65,7 +70,7 @@ app.get("/logout", (req, res, next) => {
   req.logout(function (err) {
     if (err) return next(err);
     req.session.destroy(() => {
-      res.clearCookie("connect.sid"); // Borra la cookie de sesión
+      res.clearCookie("connect.sid");
       res.json({ message: "Sesión cerrada correctamente." });
     });
   });
@@ -83,6 +88,12 @@ app.use("/api/suppliers", ensureAuth, supplierRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/", (req, res) => res.redirect("/api-docs"));
+
+// Middleware de debug (opcional, ver req.user)
+app.use((req, res, next) => {
+  console.log("REQ.USER:", req.user);
+  next();
+});
 
 // Manejo de errores
 app.use((req, res) => res.status(404).json({ message: "Not Found" }));
