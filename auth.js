@@ -1,29 +1,27 @@
 // auth.js
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-require("dotenv").config(); // Carga las variables de entorno
+require("dotenv").config();
 
-// Estrategia de Google OAuth
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,        // Tu Client ID de Google
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Tu Client Secret de Google
-      callbackURL: process.env.GOOGLE_CALLBACK_URL, // URL de callback
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     (accessToken, refreshToken, profile, done) => {
+      // Aquí podrías buscar o crear el usuario en la DB si quieres
       console.log("✅ Usuario autenticado:", profile.displayName);
-      return done(null, profile); // Devuelve el perfil de usuario a Passport
+      return done(null, profile);
     }
   )
 );
 
-// Serializar usuario en sesión
 passport.serializeUser((user, done) => {
   done(null, user);
 });
 
-// Deserializar usuario de sesión
 passport.deserializeUser((user, done) => {
   done(null, user);
 });
