@@ -1,3 +1,4 @@
+// routes/customerRoutes.js
 const express = require("express");
 const {
   getCustomers,
@@ -6,9 +7,9 @@ const {
   updateCustomer,
   deleteCustomer,
 } = require("../controllers/customerController");
+const ensureAuth = require("../middleware/ensureAuth");
 
 const router = express.Router();
-const ensureAuth = require("../middleware/ensureAuth");
 
 router.get("/", ensureAuth, getCustomers);
 router.get("/:id", ensureAuth, getCustomerById);

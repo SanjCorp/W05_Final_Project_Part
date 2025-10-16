@@ -22,7 +22,7 @@ const ensureAuth = require("./middleware/ensureAuth");
 const app = express();
 app.use(express.json());
 
-// 🟢 Configuración de sesión
+// Configuración de sesión
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "clave_segura",
@@ -39,7 +39,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 🟢 Autenticación con Google
+// Autenticación con Google
 app.get(
   "/auth/google",
   passport.authenticate("google", {
@@ -70,35 +70,31 @@ app.get("/logout", (req, res, next) => {
 
 app.get("/login", (req, res) => res.redirect("/auth/google"));
 
-// 🧱 Middleware de protección aplicado dentro de las rutas
+// Rutas protegidas con ensureAuth
 app.use("/products", ensureAuth, productRoutes);
 app.use("/orders", ensureAuth, orderRoutes);
 app.use("/customers", ensureAuth, customerRoutes);
 app.use("/suppliers", ensureAuth, supplierRoutes);
 
-// 🧾 Documentación Swagger
+// Documentación Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/", (req, res) => res.redirect("/api-docs"));
 
-// Manejo de 404
 app.use((req, res) => res.status(404).json({ message: "Not Found" }));
 
-// Manejo de errores
 app.use((err, req, res, next) => {
   console.error("⚠️ Error detectado:", err);
   res.status(err.status || 500).json({ message: err.message || "Internal Error" });
 });
 
-// 🟢 Conexión a MongoDB
+// Conexión a MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ Conectado a MongoDB");
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () =>
-      console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`)
-    );
+    app.listen(PORT, () => console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`));
   })
   .catch(err => console.error("❌ Error al conectar a MongoDB:", err.message));
 
