@@ -1,56 +1,20 @@
-// routes/customerRoutes.js
 const express = require("express");
-const {
-  getCustomers,
-  getCustomerById,
-  createCustomer,
-  updateCustomer,
-  deleteCustomer,
+const { 
+  getAllX,
+  getXById,
+  createX,
+  updateX,
+  deleteX 
 } = require("../controllers/customerController");
+const ensureAuth = require("../middleware/ensureAuth");
 
-module.exports = (ensureAuth) => {
-  const router = express.Router();
+const router = express.Router();
 
-  // Todas las rutas requieren autenticación
-  router.get("/", ensureAuth, async (req, res) => {
-    try {
-      const customers = await getCustomers(req, res);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
+// Todas las rutas protegidas
+router.get("/", ensureAuth, getAllX);
+router.get("/:id", ensureAuth, getXById);
+router.post("/", ensureAuth, createX);
+router.put("/:id", ensureAuth, updateX);
+router.delete("/:id", ensureAuth, deleteX);
 
-  router.get("/:id", ensureAuth, async (req, res) => {
-    try {
-      const customer = await getCustomerById(req, res);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
-
-  router.post("/", ensureAuth, async (req, res) => {
-    try {
-      const newCustomer = await createCustomer(req, res);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  });
-
-  router.put("/:id", ensureAuth, async (req, res) => {
-    try {
-      const updated = await updateCustomer(req, res);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  });
-
-  router.delete("/:id", ensureAuth, async (req, res) => {
-    try {
-      const deleted = await deleteCustomer(req, res);
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  });
-
-  return router;
-};
+module.exports = router;

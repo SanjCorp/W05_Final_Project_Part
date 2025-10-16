@@ -1,29 +1,20 @@
-const express = require('express');
-const Product = require('../models/productModel'); // <- corregido
+const express = require("express");
+const { 
+  getAllX,
+  getXById,
+  createX,
+  updateX,
+  deleteX 
+} = require("../controllers/productController");
+const ensureAuth = require("../middleware/ensureAuth");
 
-module.exports = (ensureAuth) => {
-  const router = express.Router();
+const router = express.Router();
 
-  router.get('/', ensureAuth, async (req, res) => {
-    const products = await Product.find();
-    res.json(products);
-  });
+// Todas las rutas protegidas
+router.get("/", ensureAuth, getAllX);
+router.get("/:id", ensureAuth, getXById);
+router.post("/", ensureAuth, createX);
+router.put("/:id", ensureAuth, updateX);
+router.delete("/:id", ensureAuth, deleteX);
 
-  router.post('/', ensureAuth, async (req, res) => {
-    const product = new Product(req.body);
-    await product.save();
-    res.status(201).json(product);
-  });
-
-  router.put('/:id', ensureAuth, async (req, res) => {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(product);
-  });
-
-  router.delete('/:id', ensureAuth, async (req, res) => {
-    await Product.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Product deleted' });
-  });
-
-  return router;
-};
+module.exports = router;
