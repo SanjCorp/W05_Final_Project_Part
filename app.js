@@ -31,7 +31,7 @@ app.use(
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
       collectionName: "sessions",
-      ttl: 14 * 24 * 60 * 60,
+      ttl: 14 * 24 * 60 * 60, // 14 días
     }),
     cookie: {
       maxAge: 14 * 24 * 60 * 60 * 1000, // 14 días
@@ -79,6 +79,7 @@ app.get("/logout", (req, res, next) => {
 app.get("/login", (req, res) => res.redirect("/auth/google"));
 
 // Rutas protegidas con ensureAuth y prefijo /api
+// Para pruebas sin login, comentar ensureAuth
 app.use("/api/products", ensureAuth, productRoutes);
 app.use("/api/orders", ensureAuth, orderRoutes);
 app.use("/api/customers", ensureAuth, customerRoutes);
@@ -89,7 +90,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/", (req, res) => res.redirect("/api-docs"));
 
-// Middleware de debug (opcional, ver req.user)
+// Middleware de debug opcional (muestra req.user en consola)
 app.use((req, res, next) => {
   console.log("REQ.USER:", req.user);
   next();
