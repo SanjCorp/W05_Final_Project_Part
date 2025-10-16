@@ -1,7 +1,7 @@
 // auth.js
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-require('dotenv').config();
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+require("dotenv").config();
 
 passport.use(
   new GoogleStrategy(
@@ -11,7 +11,7 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     (accessToken, refreshToken, profile, done) => {
-      // Aquí podrías guardar el usuario en la base de datos si quieres
+      console.log("✅ Usuario autenticado:", profile.displayName);
       return done(null, profile);
     }
   )
