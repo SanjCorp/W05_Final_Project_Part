@@ -1,4 +1,3 @@
-// models/supplierModel.js
 const mongoose = require("mongoose");
 
 const supplierSchema = new mongoose.Schema({

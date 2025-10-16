@@ -1,4 +1,4 @@
-const Order = require("../models/Order");
+const Order = require("../models/orderModel");
 
 const getAllOrders = async (req, res) => {
   try {
@@ -31,7 +31,11 @@ const createOrder = async (req, res) => {
 
 const updateOrder = async (req, res) => {
   try {
-    const updated = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const updated = await Order.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
     if (!updated) return res.status(404).json({ message: "Order not found" });
     res.json(updated);
   } catch (err) {
@@ -49,4 +53,10 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-module.exports = { getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder };
+module.exports = {
+  getAllOrders,
+  getOrderById,
+  createOrder,
+  updateOrder,
+  deleteOrder,
+};

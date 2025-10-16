@@ -1,4 +1,4 @@
-const Supplier = require("../models/Supplier");
+const Supplier = require("../models/supplierModel");
 
 const getAllSuppliers = async (req, res) => {
   try {
@@ -31,7 +31,11 @@ const createSupplier = async (req, res) => {
 
 const updateSupplier = async (req, res) => {
   try {
-    const updated = await Supplier.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const updated = await Supplier.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
     if (!updated) return res.status(404).json({ message: "Supplier not found" });
     res.json(updated);
   } catch (err) {
@@ -49,4 +53,10 @@ const deleteSupplier = async (req, res) => {
   }
 };
 
-module.exports = { getAllSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier };
+module.exports = {
+  getAllSuppliers,
+  getSupplierById,
+  createSupplier,
+  updateSupplier,
+  deleteSupplier,
+};

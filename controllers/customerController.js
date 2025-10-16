@@ -1,4 +1,4 @@
-const Customer = require("../models/Customer");
+const Customer = require("../models/customerModel");
 
 const getAllCustomers = async (req, res) => {
   try {
@@ -31,7 +31,11 @@ const createCustomer = async (req, res) => {
 
 const updateCustomer = async (req, res) => {
   try {
-    const updated = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const updated = await Customer.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
     if (!updated) return res.status(404).json({ message: "Customer not found" });
     res.json(updated);
   } catch (err) {
@@ -49,4 +53,10 @@ const deleteCustomer = async (req, res) => {
   }
 };
 
-module.exports = { getAllCustomers, getCustomerById, createCustomer, updateCustomer, deleteCustomer };
+module.exports = {
+  getAllCustomers,
+  getCustomerById,
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
+};

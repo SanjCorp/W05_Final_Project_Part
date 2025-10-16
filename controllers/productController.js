@@ -1,4 +1,4 @@
-const Product = require("../models/Product");
+const Product = require("../models/productModel");
 
 const getAllProducts = async (req, res) => {
   try {
@@ -31,7 +31,11 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const updated = await Product.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
     if (!updated) return res.status(404).json({ message: "Product not found" });
     res.json(updated);
   } catch (err) {
@@ -49,4 +53,10 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct };
+module.exports = {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+};
